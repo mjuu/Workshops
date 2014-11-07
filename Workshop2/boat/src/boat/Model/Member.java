@@ -45,7 +45,6 @@ public class Member{
 
     public void addBoat(Boat boat){
         boat.setBoatId(boatID++);
-        boat.getBoatID();
         boatList.add(boat);
     }
 

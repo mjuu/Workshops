@@ -83,7 +83,7 @@ public class Console {
             }
         }
     }
-    
+
     public void addMember(){
         System.out.println("Name: ");
         String memberName = scanner.nextLine();
@@ -94,36 +94,43 @@ public class Console {
         controller.addMember(memberName, personalNr);
     }
 
-     public void editMember() {
+    public void editMember() {
         System.out.println("Personal nr [YYMMDDXXXX] : ");
         String personalNr = scanner.nextLine();
+        Member member = controller.getMemberByPersonalNr(personalNr);
 
-        System.out.println("Press m to edit name"
-                + "\nPress e to edit personal nr"
-                + "\nPress q to cancel");
-        
-        while (input != "") {
-            while (scanner.hasNextLine()) {
-                input = scanner.nextLine();
+        if (member == null){
+            System.out.println("Member is not in system!");
+            startMenu();
+        }
+        else{
+            System.out.println("Press m to edit name"
+                    + "\nPress e to edit personal nr"
+                    + "\nPress q to cancel");
 
-                switch (input) {
-                    case "m":
-                        
-                        System.out.println("Enter new name: ");
-                        String newMemberName = scanner.nextLine();
-                        controller.editMemberName(personalNr, newMemberName);
-                        editMember();
-                        break;
-                    case "e":
-                        System.out.println("Enter new personal nr: ");
-                        String newPersonalNr = scanner.nextLine();
-                        controller.editPersonalNr(personalNr, newPersonalNr);
-                        editMember();
-                        break;
-                    case "q":
-                        System.out.println("Cancel");
-                        startMenu();
-                        break;
+            while (input != "") {
+                while (scanner.hasNextLine()) {
+                    input = scanner.nextLine();
+
+                    switch (input) {
+                        case "m":
+
+                            System.out.println("Enter new name: ");
+                            String newMemberName = scanner.nextLine();
+                            controller.editMemberName(personalNr, newMemberName);
+                            editMember();
+                            break;
+                        case "e":
+                            System.out.println("Enter new personal nr: ");
+                            String newPersonalNr = scanner.nextLine();
+                            controller.editPersonalNr(personalNr, newPersonalNr);
+                            editMember();
+                            break;
+                        case "q":
+                            System.out.println("Cancel");
+                            startMenu();
+                            break;
+                    }
                 }
             }
         }
@@ -133,26 +140,37 @@ public class Console {
     public void viewMember(){
         System.out.println("Enter personal nr [YYMMDDXXXX] : ");
         String personalNr = scanner.nextLine();
-        Member member = controller.getMember(personalNr);
+        Member member = controller.getMemberByPersonalNr(personalNr);
 
-        System.out.println("Personal Nr: " + member.getPersonId()
-                + "\nName: " + member.getName()
-                + "\nMemberId: " + member.getMemberId());
+        if (member == null){
+            System.out.println("Member is not in system!");
+            startMenu();
+        }
+        else{
+            System.out.println("Personal Nr: " + member.getPersonId()
+                    + "\nName: " + member.getName()
+                    + "\nMemberId: " + member.getMemberId());
 
-        for (Boat boat : member.getBoatList()){
-            System.out.println("---------------"
-                    +"\nBoat Nr: "+boat.getBoatID()
-                    +"\nBoat Type: "+boat.getBoatType()
-                    +"\nBoat Length: "+boat.getBoatLength()+" cm");
+            for (Boat boat : member.getBoatList()){
+                System.out.println("~~~~~~~~~"
+                        +"\nBoat Nr: "+boat.getBoatID()
+                        +"\nBoat Type: "+boat.getBoatType()
+                        +"\nBoat Length: "+boat.getBoatLength()+" cm");
+            }
         }
     }
 
     public void removeMember(){
         System.out.println("Enter personal nr [YYMMDDXXXX] : ");
         String personalNr = scanner.nextLine();
-       
+        Member member = controller.getMemberByPersonalNr(personalNr);
 
-        controller.removeMember(personalNr);
+        if(member == null){
+            System.out.println("Member not in system!");
+        }
+        else{
+            controller.removeMember(personalNr);
+        }
     }
 
     public void addBoat(){
@@ -180,7 +198,7 @@ public class Console {
 
         System.out.println("Enter boat id: ");
         int boatId = integerScan.nextInt();
-        
+
         System.out.println("Length of the boat in meters: ");
         String boatLength = scanner.nextLine();
 
@@ -208,7 +226,6 @@ public class Console {
     public void viewCompactList(List<Member> memberList){
 
         for (Member member : memberList){
-
             System.out.println("Personal nr: "+member.getPersonId()
                     +"\nName: "+member.getName()
                     +"\nNumber of boats: "+member.getNumberOfBoats());
@@ -218,14 +235,13 @@ public class Console {
     public void viewFullList(List<Member> memberList){
 
         for (Member member : memberList){
-
             System.out.println("MemberId: "+ member.getMemberId()
                     +"\nPersonal nr: "  + member.getPersonId()
                     +"\nName: "+ member.getName());
 
             for (Boat boat : member.getBoatList()){
-
-                System.out.println("---- Boat nr: "+ boat.getBoatID()+ "----"
+                System.out.println("~~~~~~~~~"
+                        +"\nBoat nr: "+ boat.getBoatID()
                         +"\nBoat type: "+boat.getBoatType()
                         +"\nBoat lenght: "+boat.getBoatLength()+" meters");
             }

@@ -14,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class SystemController {
 
@@ -38,13 +37,10 @@ public class SystemController {
    Adds the member to the memberList, then saves to the system
     */
     public void addMember(String name, String personalNr) {
-
         Member member = new Member();
         member.setName(name);
         member.setPersonId(personalNr);
         member.setMemberId(generateUniqueID());
-
-
         memberList.add(member);
         saveToSystem();
     }
@@ -60,37 +56,46 @@ public class SystemController {
         Edits the returned member name to a new given name
      */
     public void editMemberName(String personalNr, String newMemberName) {
+        Member member = getMemberByPersonalNr(personalNr);
 
-        Member member = getMember(personalNr);
-        member.setName(newMemberName);
-
-        saveToSystem();
-        System.out.println("Member name was edited!");
+        if (member == null) {
+            System.out.println("Member does not exist, try again");
+        }
+        else {
+            member.setName(newMemberName);
+            saveToSystem();
+            System.out.println("Member name was edited!");
+        }
     }
     /*
        Edits the returned member name to a new given personal Nr
      */
     public void editPersonalNr(String personalNr, String newPersonalNr){
+        Member member = getMemberByPersonalNr(personalNr);
 
-        Member member = getMember(personalNr);
-        member.setPersonId(newPersonalNr);
-
-        saveToSystem();
-        System.out.println("Member personal number was edited!");
+        if(member == null){
+            System.out.println("Member does not exist, try again");
+        }
+        else {
+            member.setPersonId(newPersonalNr);
+            saveToSystem();
+            System.out.println("Member personal number was edited!");
+        }
     }
 
     /*
-
+       Removes the returned member from the memberList
      */
     public void removeMember(String personalNr) {
-        Member member = getMember(personalNr);
+        Member member = getMemberByPersonalNr(personalNr);
 
-        if (personalNr.equals(member.getPersonId())) {
+        if(member == null){
+            System.out.println("Member does not exist, try again");
+        }
+        else{
             memberList.remove(member);
             System.out.println("Member was removed!");
             saveToSystem();
-        } else {
-            System.out.println("Personal nr did not match any existing member");
         }
     }
 
@@ -100,16 +105,19 @@ public class SystemController {
     and saves the systemfile
      */
     public void addBoat(int boatType, String length, String personalNr) {
+        Member member = getMemberByPersonalNr(personalNr);
 
-        Member member = getMember(personalNr);
-        Boat boat = new Boat();
-
-        boat.setBoatType(boatType);
-        boat.setBoatLength(length);
-        member.addBoat(boat);
-        System.out.println("Boat was added!");
-
-        saveToSystem();
+        if (member == null) {
+            System.out.println("Member does not exist, try again");
+        }
+        else {
+            Boat boat = new Boat();
+            boat.setBoatType(boatType);
+            boat.setBoatLength(length);
+            member.addBoat(boat);
+            System.out.println("Boat was added!");
+            saveToSystem();
+        }
     }
 
     /*
@@ -118,25 +126,23 @@ public class SystemController {
     some boat in the boatList, that one is edited.
      */
     public void editBoat(String personalNr, int boatId, int boatType, String length) {
+        Member member = getMemberByPersonalNr(personalNr);
 
-        Member member = getMember(personalNr);
-
-        if (personalNr.equals(member.getPersonId())) {
-
+        if (member == null){
+            System.out.println("Member was not found!");
+        }
+        else{
             for (Boat boat : member.getBoatList()) {
-
                 if (boatId == boat.getBoatID()) {
-
                     boat.setBoatType(boatType);
                     boat.setBoatLength(length);
-
                     System.out.println("Boat was edited!");
                     saveToSystem();
                 }
+                else {
+                    System.out.println("Boat id does not exist");
+                }
             }
-        }
-        else {
-            System.out.println("Boat number was not found");
         }
     }
 
@@ -145,36 +151,34 @@ public class SystemController {
     and the boatId is correct and found!
      */
     public void removeBoat(String personalNr, int boatId) {
+        Member member = getMemberByPersonalNr(personalNr);
 
-        Member member = getMember(personalNr);
+        if (member == null){
+            System.out.println("Member was not found, try again");
+        }
+        else {
+            for (Boat boat : member.getBoatList()) {
 
-        for (Boat boat : member.getBoatList()) {
-
-            if (boatId == boat.getBoatID()) {
-
-                member.remove(boat);
-
-                System.out.println("Boat was deleted!");
-                saveToSystem();
+                if (boatId == boat.getBoatID()) {
+                    member.remove(boat);
+                    System.out.println("Boat was deleted!");
+                    saveToSystem();
+                }
+                else {
+                    System.out.println("Boat id does not exist!");
+                }
             }
         }
-
     }
 
     /*
     Searches and finds the member by its personalNr
-    and returns the member
+    and returns the member, null if not found
      */
-    public Member getMember(String personalNr) {
-
-        for (Member m : memberList) {
-
-            if (personalNr.equals(m.getPersonId())) {
-                Member member;
-                return member = m;
-
-            } else {
-//                System.out.println("Could not find member with that personal nr");
+    public Member getMemberByPersonalNr(String personalNr) {
+        for (Member member : memberList) {
+            if (personalNr.equalsIgnoreCase(member.getPersonId())) {
+                return member;
             }
         }
         return null;
@@ -283,7 +287,6 @@ public class SystemController {
 
                 Elements element = members.get(i).getChildElements();
                 Member member = new Member();
-
                 /*
                 Member id
                 */
@@ -319,7 +322,7 @@ public class SystemController {
                         String length = boats.get(j).getChildElements().get(1).getValue();
                         int lengthInt = Integer.parseInt(length.substring(0, length.length() - 1)); //- 1));
                         b.setBoatLength(length);
-                        
+
                         member.addBoat(b);
 
                     }
