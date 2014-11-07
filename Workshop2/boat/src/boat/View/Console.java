@@ -150,6 +150,7 @@ public class Console {
     public void removeMember(){
         System.out.println("Enter personal nr [YYMMDDXXXX] : ");
         String personalNr = scanner.nextLine();
+       
 
         controller.removeMember(personalNr);
     }

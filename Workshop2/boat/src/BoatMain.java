@@ -5,8 +5,6 @@
  */
 
 import boat.View.Console;
-import org.jdom2.JDOMException;
-
 import java.io.IOException;
 
 /**
@@ -16,9 +14,11 @@ import java.io.IOException;
 public class BoatMain {
 
     /**
+     * 
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, JDOMException{
+             
+    public static void main(String[] args) throws IOException{
 
         Console con = new Console();
         con.startMenu();

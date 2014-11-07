@@ -166,7 +166,7 @@ public class SystemController {
     and returns the member
      */
     public Member getMember(String personalNr) {
-        
+
         for (Member m : memberList) {
 
             if (personalNr.equals(m.getPersonId())) {
