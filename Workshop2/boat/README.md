@@ -6,10 +6,11 @@
 * The file will be created after the first member is added.
 
 1. Create a folder called src and 
-2. Download .zip fil from github, extract in this ”src” folder
-3. in Eclipse, Create new project(File/New Java Project/ choose the ”src” folder.
-4. Compile the ”BoatMain.java” file.
+2. Download .zip fil from github, extract in this â€srcâ€ folder
+3. in Eclipse, Create new project(File/New Java Project/ choose the â€srcâ€ folder.
+4. Compile the â€BoatMain.javaâ€ file.
+5. IN eclipse, Right click on boat project (Properties/ Java Build Path / Libraries/Add External Jars/ ,and choose "xom-1.2.10.jar"
 
 Alternative
 1. Download the packaged .jar file and run it in your Command Prompt/Terminal
-using ”java -classpath location_of_jar”
+using â€java -classpath location_of_jarâ€
