@@ -16,7 +16,6 @@ public class PlayGame implements Observer {
 
         if (arg instanceof String) {
             a_view.DisplayWelcomeMessage();
-
             a_view.DisplayDealerHand(a_game.GetDealerHand(), a_game.GetDealerScore());
             a_view.DisplayPlayerHand(a_game.GetPlayerHand(), a_game.GetPlayerScore());
 
@@ -28,13 +27,29 @@ public class PlayGame implements Observer {
 
             if (input == 'p') {
                 a_game.NewGame();
-            } else if (input == 'h') {
+
+            }
+            else if (input == 'h') {
+                try {
+                    Thread.sleep(2000);
+
+                } catch (InterruptedException e){
+                    System.out.println(e.getMessage());
+                }
 
                 a_game.Hit();
-            } else if (input == 's') {
+            }
+            else if (input == 's') {
+                try {
+                    Thread.sleep(2000);
+
+                } catch (InterruptedException e){
+                    System.out.println(e.getMessage());
+                }
 
                 a_game.Stand();
-            } else if (input == 'q') {
+            }
+            else if (input == 'q') {
                 System.exit(0);
             }
         }

@@ -14,47 +14,68 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-
+import java.util.UUID;
 
 public class SystemController {
 
-    private final String filePath = "boatClubSystem.xml";
-    public List<Member> memberList = new ArrayList<Member>();
+    private List<Member> memberList;
+    private final String filePath = "boatClubMembers.xml";
+    private int uniqueID = 0;
 
     public SystemController() {
-        //readFromSystem();
+        memberList = new ArrayList<Member>();
+        readFromSystem();
     }
 
     /*
-   Adds the member to the memberList, then saves the systemfile
+       The list of members
+        */
+    public List<Member> getMemberList() {
+        return memberList;
+    }
+
+    /*
+   Adds the member to the memberList, then saves to the system
     */
     public void addMember(String name, String personalNr) {
 
         Member member = new Member();
         member.setName(name);
         member.setPersonId(personalNr);
+        member.setMemberId(generateUniqueID());
+
 
         memberList.add(member);
-
-        saveSystem();
+        saveToSystem();
     }
 
-    public void editMemberName(String oldMemberName, String newMemberName) {
+    private String generateUniqueID(){
+        uniqueID = memberList.size();
+        uniqueID++;
+        String uid = Integer.toString(uniqueID);
+        return uid;
+    }
 
-        Member member = getMember(oldMemberName);
+    /*
+        Edits the returned member name to a new given name
+     */
+    public void editMemberName(String personalNr, String newMemberName) {
+
+        Member member = getMember(personalNr);
         member.setName(newMemberName);
 
-        saveSystem();
+        saveToSystem();
         System.out.println("Member name was edited!");
     }
+    /*
+       Edits the returned member name to a new given personal Nr
+     */
+    public void editPersonalNr(String personalNr, String newPersonalNr){
 
-    public void editPersonalNr(String oldPersonalNr, String newPersonalNr){
-
-        Member member = getMember(oldPersonalNr);
+        Member member = getMember(personalNr);
         member.setPersonId(newPersonalNr);
 
-        saveSystem();
+        saveToSystem();
         System.out.println("Member personal number was edited!");
     }
 
@@ -65,13 +86,11 @@ public class SystemController {
         Member member = getMember(personalNr);
 
         if (personalNr.equals(member.getPersonId())) {
-
             memberList.remove(member);
-            saveSystem();
             System.out.println("Member was removed!");
-
+            saveToSystem();
         } else {
-            System.out.println("Member could not be removed!");
+            System.out.println("Personal nr did not match any existing member");
         }
     }
 
@@ -80,17 +99,17 @@ public class SystemController {
     If the member exists, then the boat is added to that members boatList
     and saves the systemfile
      */
-    public void addBoat(int typeChoice, String length, String personalNr) {
+    public void addBoat(int boatType, String length, String personalNr) {
 
         Member member = getMember(personalNr);
         Boat boat = new Boat();
 
-        boat.setBoatType(typeChoice);
+        boat.setBoatType(boatType);
         boat.setBoatLength(length);
-
         member.addBoat(boat);
-        saveSystem();
         System.out.println("Boat was added!");
+
+        saveToSystem();
     }
 
     /*
@@ -98,7 +117,7 @@ public class SystemController {
     to find the specific member, if the boatID matches
     some boat in the boatList, that one is edited.
      */
-    public void editBoat(String personalNr, int boatId, int choice, String length) {
+    public void editBoat(String personalNr, int boatId, int boatType, String length) {
 
         Member member = getMember(personalNr);
 
@@ -106,15 +125,18 @@ public class SystemController {
 
             for (Boat boat : member.getBoatList()) {
 
-                if (boatId == boat.getBoatId()) {
+                if (boatId == boat.getBoatID()) {
 
-                    boat.setBoatType(choice);
+                    boat.setBoatType(boatType);
                     boat.setBoatLength(length);
 
-                    saveSystem();
                     System.out.println("Boat was edited!");
+                    saveToSystem();
                 }
             }
+        }
+        else {
+            System.out.println("Boat number was not found");
         }
     }
 
@@ -128,14 +150,15 @@ public class SystemController {
 
         for (Boat boat : member.getBoatList()) {
 
-            if (boatId == boat.getBoatId()) {
+            if (boatId == boat.getBoatID()) {
 
-                member.deleteBoat(boat);
+                member.remove(boat);
 
-                saveSystem();
                 System.out.println("Boat was deleted!");
+                saveToSystem();
             }
         }
+
     }
 
     /*
@@ -143,26 +166,25 @@ public class SystemController {
     and returns the member
      */
     public Member getMember(String personalNr) {
-
-        Member member = null;
-
+        
         for (Member m : memberList) {
 
             if (personalNr.equals(m.getPersonId())) {
-
+                Member member;
                 return member = m;
+
             } else {
-                System.out.println("Could not find member with that personalNr");
+//                System.out.println("Could not find member with that personal nr");
             }
         }
-        return member;
+        return null;
     }
 
     /*
     Saves the system information to .xml format file
     and store every data.
      */
-    public void saveSystem () {
+    private void saveToSystem() {
         FileOutputStream outputStream = null;
         XMLStreamWriter sWriter = null;
 
@@ -176,30 +198,22 @@ public class SystemController {
             sWriter.writeCharacters("\n");
             sWriter.writeStartElement("Members");
             sWriter.writeCharacters("\n\t");
-            for (int i = 0; i < memberList.size(); i++) {
 
-                Member member = memberList.get(i);
-
+            for (Member member : memberList){
                 sWriter.writeStartElement("Member");
-                sWriter.writeAttribute("memberId", Integer.toString(member.getMemberId()));
-
+                sWriter.writeAttribute("memberId", member.getMemberId());
                 sWriter.writeCharacters("\n\t\t");
-
                 sWriter.writeStartElement("name");
                 sWriter.writeCharacters(member.getName());
                 sWriter.writeEndElement();
-
                 sWriter.writeCharacters("\n\t\t");
-
                 sWriter.writeStartElement("personalNr");
                 sWriter.writeCharacters(member.getPersonId());
                 sWriter.writeEndElement();
 
-
                 if (member.getBoatList().size() > 0) {
                     sWriter.writeCharacters("\n\t\t");
                     sWriter.writeStartElement("Boats");
-
 
                     for (int j = 0; j < member.getBoatList().size(); j++) {
 
@@ -210,50 +224,37 @@ public class SystemController {
                         }
 
                         sWriter.writeStartElement("boat");
-                        sWriter.writeAttribute("id", Integer.toString(boat.getBoatId()));
-
-                        sWriter.writeCharacters("\n\t\t\t\t");
-
+                        sWriter.writeAttribute("id", Integer.toString(boat.getBoatID()));
+                        sWriter.writeCharacters("\n\t\t\t");
                         sWriter.writeStartElement("type");
                         sWriter.writeCharacters(boat.getBoatType());
                         sWriter.writeEndElement();
-
                         sWriter.writeCharacters("\n\t\t\t\t");
-
                         sWriter.writeStartElement("length");
-                        sWriter.writeCharacters(boat.getBoatLength() + "m");
+                        sWriter.writeCharacters(boat.getBoatLength());
                         sWriter.writeEndElement();
-
                         sWriter.writeCharacters("\n\t\t\t");
-
                         sWriter.writeEndElement();
 
                         if (j != member.getBoatList().size() - 1) {
                             sWriter.writeCharacters("\n\t\t\t");
                         }
                     }
-
                     sWriter.writeCharacters("\n\t\t");
-
                     sWriter.writeEndElement();
                 }
 
                 sWriter.writeCharacters("\n\t");
-
                 sWriter.writeEndElement();
 
-                if (i != memberList.size() - 1) {
-                    sWriter.writeCharacters("\n\t");
-                } else {
-                    sWriter.writeCharacters("\n");
-                }
             }
             sWriter.writeEndElement();
             sWriter.flush();
             sWriter.close();
         } catch (XMLStreamException e) {
-
+            System.out.println("Something wrong with the XML output");
         } catch (IOException e) {
+            System.out.println("Could not write to the system file");
 
         }
         System.out.println("System was successfully updated!");
@@ -263,7 +264,7 @@ public class SystemController {
     Reads the system information from the file and
     adds it all in the memberList.
      */
-    public void readFromSystem () {
+    private void readFromSystem() {
 
         File file = null;
         Builder builder = null;
@@ -276,19 +277,25 @@ public class SystemController {
             doc = builder.build(file);
 
             Element root = doc.getRootElement();
-
             Elements members = root.getChildElements();
-
 
             for (int i = 0; i < members.size(); i++) {
 
                 Elements element = members.get(i).getChildElements();
                 Member member = new Member();
 
-                member.setMemberId(Integer.parseInt(element.get(i).getAttribute("memberId").getValue()));
-                member.setPersonId(element.get(0).getValue());
-                member.setName(element.get(1).getValue());
-
+                /*
+                Member id
+                */
+                member.setMemberId(members.get(i).getAttribute("memberId").getValue());
+                /*
+                Personal Nr
+                 */
+                member.setName(element.get(0).getValue());
+                /*
+                Member Name
+                 */
+                member.setPersonId(element.get(1).getValue());
                 memberList.add(member);
 
                 if (members.get(i).getChildElements().size() == 3) {
@@ -298,28 +305,31 @@ public class SystemController {
                     for (int j = 0; j < boats.size(); j++) {
 
                         Boat b = new Boat();
-
-                        b.setBoatId(Integer.parseInt(boats.get(j).getAttribute("boatId").getValue()));
-                        b.setBoatType(Integer.parseInt(boats.get(j).getChildElements().get(1).getValue()));
-                        b.setBoatLength(boats.get(j).getChildElements().get(2).getValue());
+                        /*
+                        Boat Id
+                         */
+                        b.setBoatId(Integer.parseInt(boats.get(j).getAttribute("id").getValue()));
+                        /*
+                        Boat Type
+                         */
+                        b.setBoatTypeString(boats.get(j).getChildElements().get(0).getValue());
+                        /*
+                        Boat Lenght
+                         */
+                        String length = boats.get(j).getChildElements().get(1).getValue();
+                        int lengthInt = Integer.parseInt(length.substring(0, length.length() - 1)); //- 1));
+                        b.setBoatLength(length);
+                        
+                        member.addBoat(b);
 
                     }
                 }
             }
         } catch (IOException e) {
-            System.out.print("Could not read from the system");
+            System.out.print("File is not created yet!");
         } catch (nu.xom.ParsingException e) {
             System.out.print("Parsing was unsuccessful!");
-        } catch (NullPointerException e) {
-            System.out.println("Something is wrong in the system file");
         }
-    }
-
-    /*
-    The list of members
-     */
-    public List<Member> getMemberList() {
-        return memberList;
     }
 
 }

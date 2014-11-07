@@ -10,8 +10,7 @@ public class Game {
     m_dealer = new Dealer(new BlackJack.model.rules.RulesFactory());
     m_player = new Player();
   }
-    
-    
+
   public boolean IsGameOver()
   {
     return m_dealer.IsGameOver();
@@ -35,7 +34,7 @@ public class Game {
   public boolean Stand(){
 
     // TODO: Implement this according to Game_Stand.sequence diagram
-    return m_dealer.Stand(m_player, m_dealer);
+    return m_dealer.Stand();
   }
   
   public Iterable<Card> GetDealerHand()

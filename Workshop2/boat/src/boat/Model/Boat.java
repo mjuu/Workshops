@@ -4,31 +4,41 @@ public class Boat {
 
     private String boatType;
     private String boatLength;
-    private int boatId = 0;
+    private int boatID;
 
-    public void setBoatId(int id){
-        boatId++;
-        boatId = id;
+    public void setBoatId(int boatID){
+        this.boatID = boatID;
     }
 
-    public String setBoatType(int choice){
+    public void setBoatType(int choice){
+
         switch (choice) {
-            case 11:		boatType = "Sailingboat";
+            case 1:
+                boatType = "Sailingboat";
                 break;
-            case 12:		boatType = "Motorsailer";
+            case 2:
+                boatType = "Motorsailer";
                 break;
-            case 13:		boatType = "Motorboat";
+            case 3:
+                boatType = "Motorboat";
                 break;
-            case 14:		boatType = "Cayaq/Canoot";
+            case 4:
+                boatType = "Cayaq/Canoot";
                 break;
-            case 15:		boatType = "Other";
+            case 5:
+                boatType = "Other";
                 break;
+            default:
+                boatType = "Other";
         }
-        return boatType;
+    }
+    
+    public void setBoatTypeString(String boatType) {
+      this.boatType = boatType;
     }
 
-    public String setBoatLength(String boatLength){
-        return this.boatLength = boatLength;
+    public void setBoatLength(String boatLength){
+        this.boatLength = boatLength;
     }
 
     public String getBoatType(){
@@ -39,12 +49,8 @@ public class Boat {
         return boatLength;
     }
 
-    public int getBoatId(){
-        return boatId;
+    public int getBoatID(){
+        return boatID;
     }
 
 }
-
-
-
-

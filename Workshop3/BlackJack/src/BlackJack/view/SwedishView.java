@@ -8,9 +8,9 @@ public class
          
             for(int i = 0; i < 50; i++) {System.out.print("\n");};
 
-            System.out.println("Hej Black Jack V�rlden");
+            System.out.println("Hej Black Jack Världen");
             System.out.println("----------------------");
-            System.out.println("Skriv 'p' f�r att Spela, 'h' f�r nytt kort, 's' f�r att stanna 'q' f�r att avsluta\n");
+            System.out.println("Skriv 'p' för att Spela, 'h' för nytt kort, 's' för att stanna 'q' för att avsluta\n");
         }
         
         public int GetInput()

@@ -6,17 +6,16 @@ public class Dealer extends Player {
 
     private Deck m_deck;
     private INewGameStrategy m_newGameRule;
+    private TieStrategy m_tieRule;
     private IHitStrategy m_hitRule;
+    private IWinStrategy m_winRule;
 
     public Dealer(RulesFactory a_rulesFactory) {
 
         m_newGameRule = a_rulesFactory.GetNewGameRule();
         m_hitRule = a_rulesFactory.GetHitRule();
-    
-    /*for(Card c : m_deck.GetCards()) {
-      c.Show(true);
-      System.out.println("" + c.GetValue() + " of " + c.GetColor());
-    }    */
+        m_tieRule = a_rulesFactory.GetTieRule();
+        m_winRule = a_rulesFactory.GetWinnerRule();
     }
 
 
@@ -38,15 +37,16 @@ public class Dealer extends Player {
         return false;
     }
 
-    public boolean Stand(Player a_player, Dealer a_dealer) {
+    public boolean Stand() {
         if (m_deck != null) {
             this.ShowHand();
 
             while (m_hitRule.DoHit(this)) {
+
                 DealCard(true, this);
             }
         }
-        return false;
+        return true;
     }
 
     public void DealCard(boolean show, Player a_player){
@@ -58,12 +58,23 @@ public class Dealer extends Player {
 
 
     public boolean IsDealerWinner(Player a_player) {
-        if (a_player.CalcScore() > g_maxScore) {
+
+        if (m_winRule.GetWinRule(this, a_player) == false){
+
+            return false;
+        }
+
+        return true;
+        /*if (a_player.CalcScore() > g_maxScore) {
             return true;
         } else if (CalcScore() > g_maxScore) {
             return false;
         }
-        return CalcScore() >= a_player.CalcScore();
+        if (a_player.CalcScore() == CalcScore()) {
+            return m_tieRule.isDealerWinning();
+        } else {
+            return a_player.CalcScore() <= CalcScore();
+        }*/
     }
 
     public boolean IsGameOver() {
@@ -72,5 +83,4 @@ public class Dealer extends Player {
         }
         return false;
     }
-
 }

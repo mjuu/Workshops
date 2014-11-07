@@ -1,22 +1,21 @@
 package boat.Model;
 
+
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.UUID;
 
 public class Member{
 
     private String name;
     private String personId;
-    private int memberID;
-    private int uniqueID;
+    private String uniqueID;
+    private int boatID = 1;
     private List<Boat> boatList;
 
 
     public Member(){
         boatList = new ArrayList<Boat>();
-        uniqueID++;
-        memberID = uniqueID;
     }
 
     public void setName(String name) {
@@ -28,8 +27,8 @@ public class Member{
 
     }
 
-    public void setMemberId(int memberId) {
-        this.memberID = memberID;
+    public void setMemberId(String uniqueID) {
+        this.uniqueID = uniqueID;
     }
 
     public String getName() {
@@ -40,19 +39,25 @@ public class Member{
         return personId;
     }
 
-    public int getMemberId() {
-        return memberID;
+    public String getMemberId() {
+        return uniqueID;
     }
 
     public void addBoat(Boat boat){
+        boat.setBoatId(boatID++);
+        boat.getBoatID();
         boatList.add(boat);
     }
 
-    public void deleteBoat(Boat boat){
+    public void remove(Boat boat){
         boatList.remove(boat);
     }
 
     public List<Boat> getBoatList(){
         return boatList;
+    }
+
+    public int getNumberOfBoats(){
+        return boatList.size();
     }
 }

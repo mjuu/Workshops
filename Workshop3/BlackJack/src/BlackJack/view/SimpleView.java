@@ -39,6 +39,7 @@ public class SimpleView implements IView
         private void DisplayHand(String a_name, Iterable<BlackJack.model.Card> a_hand, int a_score)
         {
             System.out.println(a_name + " Has: ");
+
             for(BlackJack.model.Card c : a_hand)
             {
                 DisplayCard(c);

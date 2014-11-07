@@ -10,17 +10,21 @@ public class Soft17Strategy implements IHitStrategy {
 
     @Override
     public boolean DoHit(Player a_dealer) {
-        int score = a_dealer.CalcScore();
 
-        if (score == g_hitLimit){
-            Iterable<Card> hand = a_dealer.GetHand();
+        if (a_dealer.CalcScore() == 17){
 
-            for (Card c : hand){
-
-                if (c.GetValue() == Card.Value.Ace){
+            for (Card c : a_dealer.GetHand()){
+                if (c.GetValue() == Card.Value.Ace && a_dealer.CalcScore() == 17){
                     return true;
                 }
             }
+        }
+        if (a_dealer.CalcScore() >= g_hitLimit){
+            return false;
+        }
+
+        if (a_dealer.CalcScore() < g_hitLimit || a_dealer.CalcScore() < 21){
+            return true;
         }
         return false;
     }
